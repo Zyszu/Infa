@@ -1,3 +1,4 @@
 # Infa
-<iframe src="https://giphy.com/embed/MIY4jpusckRmU" width="480" height="259" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-nudy 😑
+![A taki gif](https://giphy.com/embed/MIY4jpusckRmU)
+
+na razie nic tu nie ma 😴
