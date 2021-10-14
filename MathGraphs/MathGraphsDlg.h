@@ -39,8 +39,16 @@ protected:
 public:
 	CStatic m_math_function_formula;
 	afx_msg void OnStnClickedMathFunctionFormula();
-	afx_msg void OnClickedDraw();
+//	afx_msg void OnClickedDraw();
+	afx_msg void mathGraphUpdate();
 	CEdit m_function_parameter_a;
 	CEdit m_function_parameter_b;
 	CEdit m_function_parameter_c;
+	CStatic m_root_points;
+//	afx_msg void OnChangeValueA();
+//	afx_msg void OnChangeValueB();
+//	afx_msg void OnChangeValueC();
+	afx_msg void OnUpdateValueA();
+	afx_msg void OnUpdateValueB();
+	afx_msg void OnUpdateValueC();
 };
