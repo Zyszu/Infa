@@ -51,4 +51,7 @@ public:
 	afx_msg void OnUpdateValueA();
 	afx_msg void OnUpdateValueB();
 	afx_msg void OnUpdateValueC();
+	afx_msg void OnNMCustomdrawGraphScale(NMHDR* pNMHDR, LRESULT* pResult);
+	CSliderCtrl m_graph_scale;
+	CStatic m_graph_scale_info;
 };

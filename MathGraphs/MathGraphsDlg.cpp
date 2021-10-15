@@ -64,6 +64,8 @@ void CMathGraphsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_VALUE_B, m_function_parameter_b);
 	DDX_Control(pDX, IDC_VALUE_C, m_function_parameter_c);
 	DDX_Control(pDX, IDC_ROOT_POINTS, m_root_points);
+	DDX_Control(pDX, IDC_GRAPH_SCALE, m_graph_scale);
+	DDX_Control(pDX, IDC_GRAPH_SCALE_INFO, m_graph_scale_info);
 }
 
 BEGIN_MESSAGE_MAP(CMathGraphsDlg, CDialogEx)
@@ -78,6 +80,7 @@ BEGIN_MESSAGE_MAP(CMathGraphsDlg, CDialogEx)
 	ON_EN_UPDATE(IDC_VALUE_A, &CMathGraphsDlg::OnUpdateValueA)
 	ON_EN_UPDATE(IDC_VALUE_B, &CMathGraphsDlg::OnUpdateValueB)
 	ON_EN_UPDATE(IDC_VALUE_C, &CMathGraphsDlg::OnUpdateValueC)
+	ON_NOTIFY(NM_CUSTOMDRAW, IDC_GRAPH_SCALE, &CMathGraphsDlg::OnNMCustomdrawGraphScale)
 END_MESSAGE_MAP()
 
 
@@ -117,6 +120,10 @@ BOOL CMathGraphsDlg::OnInitDialog()
 	dc = GetDC();
 	pen.CreatePen(PS_SOLID, 2, RGB(0, 0, 0));
 	graph_pen.CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
+
+	m_graph_scale.SetRangeMin(1);
+	m_graph_scale.SetRangeMax(200);
+	m_graph_scale.SetPos(101);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -171,7 +178,6 @@ HCURSOR CMathGraphsDlg::OnQueryDragIcon()
 }
 
 
-
 void CMathGraphsDlg::OnStnClickedMathFunctionFormula()
 {
 	// TODO: Dodaj tutaj swój kod procedury obs³ugi powiadamiania kontrolki
@@ -180,21 +186,27 @@ void CMathGraphsDlg::OnStnClickedMathFunctionFormula()
 struct RootPoints2
 {
 	float x, y;
-	int solutions;
+	char solutions;
 };
 
-int quadraticFunction(const float& p_a, const float& p_b, const float& p_c, const float& x) {
-	return (int)((p_a * x * x) + (p_b * x) + p_c);
+float quadraticFunction(
+	const float& p_a, const float& p_b, const float& p_c, const float& x)
+{
+	return (p_a * x * x) + (p_b * x) + p_c;
 }
 
-RootPoints2 rootPointsOfQuadraticFunction(const float& p_a, const float& p_b, const float& p_c) {
+RootPoints2 rootPointsOfQuadraticFunction(
+	const float& p_a, const float& p_b, const float& p_c)
+{
 	RootPoints2 _toReturn;
 	float delta = (p_b * p_b) - (4.0 * p_a * p_c);
-	if (delta < 0) {
+	if (delta < 0) 
+	{
 		_toReturn.solutions = 0;
 		return _toReturn;
 	}
-	else if (delta == 0) {
+	else if (delta == 0) 
+	{
 		_toReturn.x = -p_b / (2.0 * p_a);
 		_toReturn.solutions = 1;
 		return _toReturn;
@@ -208,8 +220,31 @@ RootPoints2 rootPointsOfQuadraticFunction(const float& p_a, const float& p_b, co
 	}
 }
 
-int mod(const int& n) {
+int i_mod(const int& n) {
 	return n < 0 ? -n : n; 
+}
+
+// temporary function
+float getScale(const float& _scale) {
+	if (_scale < 101)
+		return 1.0 / (101.0 - _scale);
+	else
+		return _scale - 100.0;
+}
+
+CString cs_getScale(const float& _scale) {
+	CString _toReturn;
+	if (_scale < 101)
+	{
+		_toReturn.Format(_T("%i"), 101 - (int)_scale);
+		_toReturn = (CString)"1 : " + _toReturn;
+	}
+	else
+	{
+		_toReturn.Format(_T("%i"), (int)_scale - 100);
+		_toReturn =  _toReturn + (CString)" : 1";
+	}
+	return _toReturn;
 }
 
 void CMathGraphsDlg::mathGraphUpdate() {
@@ -252,16 +287,16 @@ void CMathGraphsDlg::mathGraphUpdate() {
 	int g_posx = 25;
 	int g_posy = 200;
 
-	int g_width = 800;
-	int g_height = 350;
+	int g_width = 700;
+	int g_height = 700;
 
-	int g_scale = 10;
+	float g_scale = getScale(m_graph_scale.GetPos());
 
-	COLORREF rectangeColor = dc->GetBkColor();
+	COLORREF CartesianPlaneColor = dc->GetBkColor();
 
-	dc->FillSolidRect(g_posx, g_posy, g_width, g_height, rectangeColor);
+	dc->FillSolidRect(g_posx, g_posy, g_width, g_height, CartesianPlaneColor);
 
-	// drawind x axies
+	// drawing x axies
 	dc->SelectObject(&pen);
 	dc->MoveTo(g_posx, g_posy + (g_height / 2));
 	dc->LineTo(g_posx + g_width, g_posy + (g_height / 2));
@@ -273,15 +308,23 @@ void CMathGraphsDlg::mathGraphUpdate() {
 	// drawing graph
 	CPoint graph_pen_position;
 
+	{
+		float y = quadraticFunction(f_a, f_b, f_c, (g_width / -2) * g_scale);
+
+		int x_position = g_posx + (g_width / 2) + g_width / -2;
+		int y_position = g_posy + (g_height / 2) - y / g_scale;
+		dc->MoveTo(x_position, y_position);
+	}
+
 	dc->SelectObject(&graph_pen);
 	for (int x = g_width / -2; x < g_width / 2; x++) {
-		int y = quadraticFunction(f_a, f_b, f_c, x / g_scale) / g_scale;
+		float y = quadraticFunction(f_a, f_b, f_c, x * g_scale);
 
-		int x_position = g_posx + (g_width / 2) + x / g_scale;
+		int x_position = g_posx + (g_width / 2) + x;
 		int y_position = g_posy + (g_height / 2) - y / g_scale;
 		graph_pen_position.SetPoint(x_position, y_position);
 
-		if (!(mod(y) > g_height / 2))
+		if (!(i_mod(y) > g_height / 2))
 			dc->LineTo(graph_pen_position);
 
 		dc->MoveTo(graph_pen_position);
@@ -303,5 +346,17 @@ void CMathGraphsDlg::OnUpdateValueB()
 
 void CMathGraphsDlg::OnUpdateValueC()
 {
+	mathGraphUpdate();
+}
+
+
+void CMathGraphsDlg::OnNMCustomdrawGraphScale(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
+	*pResult = 0;
+
+	m_graph_scale_info.SetWindowTextW(
+		cs_getScale(m_graph_scale.GetPos())
+	);
 	mathGraphUpdate();
 }
