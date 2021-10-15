@@ -40,6 +40,7 @@ public:
 	CStatic m_math_function_formula;
 	afx_msg void OnStnClickedMathFunctionFormula();
 //	afx_msg void OnClickedDraw();
+	afx_msg void rootPointsUpdate();
 	afx_msg void mathGraphUpdate();
 	CEdit m_function_parameter_a;
 	CEdit m_function_parameter_b;

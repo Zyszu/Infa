@@ -247,7 +247,7 @@ CString cs_getScale(const float& _scale) {
 	return _toReturn;
 }
 
-void CMathGraphsDlg::mathGraphUpdate() {
+void CMathGraphsDlg::rootPointsUpdate() {
 	CString p_a, p_b, p_c, _functionFormula;
 	float f_a, f_b, f_c;
 
@@ -281,8 +281,20 @@ void CMathGraphsDlg::mathGraphUpdate() {
 	else rootPoints = (CString)"x1= " + rp1 + (CString)" x2= " + rp2;
 
 	m_root_points.SetWindowTextW(rootPoints);
+}
 
-	// seting up essential variables and drawing Cartesian plane
+void CMathGraphsDlg::mathGraphUpdate() {
+	// seting up essential variables
+	CString p_a, p_b, p_c, _functionFormula;
+	float f_a, f_b, f_c;
+
+	m_function_parameter_a.GetWindowTextW(p_a);
+	m_function_parameter_b.GetWindowTextW(p_b);
+	m_function_parameter_c.GetWindowTextW(p_c);
+
+	f_a = _ttof(p_a);
+	f_b = _ttof(p_b);
+	f_c = _ttof(p_c);
 
 	int g_posx = 25;
 	int g_posy = 200;
@@ -292,8 +304,8 @@ void CMathGraphsDlg::mathGraphUpdate() {
 
 	float g_scale = getScale(m_graph_scale.GetPos());
 
+	// drawing Cartesian plane
 	COLORREF CartesianPlaneColor = dc->GetBkColor();
-
 	dc->FillSolidRect(g_posx, g_posy, g_width, g_height, CartesianPlaneColor);
 
 	// drawing x axies
@@ -306,15 +318,8 @@ void CMathGraphsDlg::mathGraphUpdate() {
 	dc->LineTo(g_posx + (g_width / 2), g_posy + g_height);
 
 	// drawing graph
-	CPoint graph_pen_position;
-
-	{
-		float y = quadraticFunction(f_a, f_b, f_c, (g_width / -2) * g_scale);
-
-		int x_position = g_posx + (g_width / 2) + g_width / -2;
-		int y_position = g_posy + (g_height / 2) - y / g_scale;
-		dc->MoveTo(x_position, y_position);
-	}
+	CPoint graphPenPos = CPoint(0, 0);
+	CPoint graphPenPosNew;
 
 	dc->SelectObject(&graph_pen);
 	for (int x = g_width / -2; x < g_width / 2; x++) {
@@ -322,30 +327,42 @@ void CMathGraphsDlg::mathGraphUpdate() {
 
 		int x_position = g_posx + (g_width / 2) + x;
 		int y_position = g_posy + (g_height / 2) - y / g_scale;
-		graph_pen_position.SetPoint(x_position, y_position);
+		graphPenPosNew = CPoint(x_position, y_position);
 
-		if (!(i_mod(y) > g_height / 2))
-			dc->LineTo(graph_pen_position);
+		bool statement_n1 = y_position > g_posy && y_position < g_posy + g_height;
+		bool statement_n2 = graphPenPos.y > g_posy && graphPenPos.y < g_posy + g_height;
 
-		dc->MoveTo(graph_pen_position);
+		if (statement_n1 && statement_n2)
+		{
+			dc->LineTo(graphPenPosNew);
+			graphPenPos = graphPenPosNew;
+		}
+		else
+		{
+			dc->MoveTo(graphPenPosNew);
+			graphPenPos = graphPenPosNew;
+		}
 	}
 }
 
 
 void CMathGraphsDlg::OnUpdateValueA()
 {
+	rootPointsUpdate();
 	mathGraphUpdate();
 }
 
 
 void CMathGraphsDlg::OnUpdateValueB()
 {
+	rootPointsUpdate();
 	mathGraphUpdate();
 }
 
 
 void CMathGraphsDlg::OnUpdateValueC()
 {
+	rootPointsUpdate();
 	mathGraphUpdate();
 }
 
