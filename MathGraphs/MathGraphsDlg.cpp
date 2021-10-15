@@ -343,6 +343,7 @@ void CMathGraphsDlg::mathGraphUpdate() {
 			graphPenPos = graphPenPosNew;
 		}
 	}
+
 }
 
 
