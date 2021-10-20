@@ -73,19 +73,23 @@ void CLosowankaDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_NUMBER4, m_rand_number4);
 	//  DDX_Control(pDX, IDC_NUMBER5, m_rand_number6);
 	DDX_Control(pDX, IDC_NUMBER5, m_rand_number5);
+	DDX_Control(pDX, IDC_SORT_INFO, m_sort_info);
+	DDX_Control(pDX, IDC_SORT_ASC, m_sort_asc);
 }
 
 BEGIN_MESSAGE_MAP(CLosowankaDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_SORT_ASC, &CLosowankaDlg::OnClickedSortAsc)
-	ON_BN_CLICKED(IDC_SORT_DESC, &CLosowankaDlg::OnClickedSortDesc)
+//	ON_BN_CLICKED(IDC_SORT_ASC, &CLosowankaDlg::OnClickedSortAsc)
+//	ON_BN_CLICKED(IDC_SORT_DESC, &CLosowankaDlg::OnClickedSortDesc)
 	ON_BN_CLICKED(IDC_GEN_RAND_NUM, &CLosowankaDlg::OnClickedGenRandNum)
+	ON_BN_CLICKED(IDC_SORT, &CLosowankaDlg::OnClickedSort)
+	ON_BN_CLICKED(IDC_SORT_ASC, &CLosowankaDlg::OnClickedSortAsc)
 END_MESSAGE_MAP()
 
 
-void CLosowankaDlg::gen_numbers(int min = 1, int max = 100)
+void CLosowankaDlg::gen_numbers()
 {
 	CString str_numbers[5];
 	int int_numbers[5];
@@ -99,6 +103,12 @@ void CLosowankaDlg::gen_numbers(int min = 1, int max = 100)
 	m_rand_number3.SetWindowTextW(str_numbers[2]);
 	m_rand_number4.SetWindowTextW(str_numbers[3]);
 	m_rand_number5.SetWindowTextW(str_numbers[4]);
+
+	m_output1.SetWindowTextW((CString)"");
+	m_output2.SetWindowTextW((CString)"");
+	m_output3.SetWindowTextW((CString)"");
+	m_output4.SetWindowTextW((CString)"");
+	m_output5.SetWindowTextW((CString)"");
 }
 
 // CLosowankaDlg message handlers
@@ -106,7 +116,6 @@ void CLosowankaDlg::gen_numbers(int min = 1, int max = 100)
 BOOL CLosowankaDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-	srand(time(0));
 
 	// Add "About..." menu item to system menu.
 
@@ -135,6 +144,7 @@ BOOL CLosowankaDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
+	srand(time(0));
 	gen_numbers();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -189,13 +199,7 @@ HCURSOR CLosowankaDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void int_swap(int& i, int&j)
-{
-	int k;
-	k = i;
-	i = j;
-	j = k;
-}
+void int_swap(int& i, int&j) { int k; k = i; i = j; j = k; }
 
 void CLosowankaDlg::bubbleSort(bool ascending = true)
 {
@@ -210,44 +214,28 @@ void CLosowankaDlg::bubbleSort(bool ascending = true)
 
 	for (size_t i = 0; i < 5; i++) int_numbers[i] = _ttoi(str_numbers[i]);
 
-	if (ascending){
-		for (size_t i = 0; i < 5; i++)
-		{
-			for (size_t j = 0; j < 4 - i; j++){
-				if (int_numbers[j] > int_numbers[j + 1]) int_swap(int_numbers[j], int_numbers[j + 1]);
-			}
+	for (size_t i = 0; i < 5; i++)
+		for (size_t j = 0; j < 4 - i; j++){
+			bool statement = ascending == true ? int_numbers[j] > int_numbers[j + 1] : int_numbers[j] < int_numbers[j + 1];
+			if (statement) int_swap(int_numbers[j], int_numbers[j + 1]);
 		}
-	}
-	else
-	{
-		for (size_t i = 0; i < 5; i++)
-		{
-			for (size_t j = 0; j < 4 - i; j++){
-				if (int_numbers[j] < int_numbers[j + 1]) int_swap(int_numbers[j], int_numbers[j + 1]);
-			}
-		}
-	}
 
 	for (size_t i = 0; i < 5; i++) str_numbers[i].Format(_T("%i"), int_numbers[i]);
 
-	m_output1 .SetWindowTextW(str_numbers[0]);
+	m_output1.SetWindowTextW(str_numbers[0]);
 	m_output2.SetWindowTextW(str_numbers[1]);
 	m_output3.SetWindowTextW(str_numbers[2]);
 	m_output4.SetWindowTextW(str_numbers[3]);
 	m_output5.SetWindowTextW(str_numbers[4]);
 }
 
+void CLosowankaDlg::OnClickedGenRandNum() { gen_numbers(); }
 
 void CLosowankaDlg::OnClickedSortAsc()
 {
-	bubbleSort();
+	CString _return[2] = { (CString)"sort ascending", (CString)"sort descending" };
+	m_sort_info.SetWindowTextW(_return[m_sort_asc.GetCheck()]);
 }
 
+void CLosowankaDlg::OnClickedSort() { bubbleSort(!m_sort_asc.GetCheck()); }
 
-void CLosowankaDlg::OnClickedSortDesc()
-{
-	bubbleSort(false);
-}
-
-
-void CLosowankaDlg::OnClickedGenRandNum() { gen_numbers(); }

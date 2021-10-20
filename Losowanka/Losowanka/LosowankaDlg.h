@@ -31,11 +31,6 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-//	CEdit r_number1;
-//	CEdit r_number2;
-//	CEdit r_number3;
-//	CEdit r_number4;
-//	CEdit r_number5;
 	CEdit m_output1;
 	CEdit m_output2;
 	CEdit m_output3;
@@ -45,12 +40,12 @@ public:
 	CEdit m_rand_number2;
 	CEdit m_rand_number3;
 	CEdit m_rand_number4;
-//	CEdit m_rand_number6;
 	CEdit m_rand_number5;
-	afx_msg void OnClickedSortAsc();
-	afx_msg void OnClickedSortDesc();
-	afx_msg void OnBnClickedGenRandNum();
 	afx_msg void OnClickedGenRandNum();
-	afx_msg void gen_numbers(int, int);
+	afx_msg void gen_numbers();
 	afx_msg void bubbleSort(bool);
+	afx_msg void OnClickedSort();
+	CStatic m_sort_info;
+	afx_msg void OnClickedSortAsc();
+	CButton m_sort_asc;
 };
