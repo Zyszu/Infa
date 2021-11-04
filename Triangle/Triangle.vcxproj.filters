@@ -36,6 +36,9 @@
     <ClInclude Include="CTriangleProperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TriangleInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
@@ -48,6 +51,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CTrianglePropertiesDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CTRIANGLEPROPERTIES.CPP">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

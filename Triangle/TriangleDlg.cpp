@@ -150,6 +150,7 @@ BOOL CTriangleDlg::OnInitDialog()
 
 	// Sliders ------=---
 
+	 // IDC_DIALOG
 	const int SLIDER_X_MIN = df_x + df_margin;
 	const int SLIDER_X_MAX = df_width + df_margin;
 	const int SLIDER_Y_MIN = df_y + df_margin;
@@ -183,6 +184,15 @@ BOOL CTriangleDlg::OnInitDialog()
 	_penRed.CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
 	_penGreen.CreatePen(PS_SOLID, 2, RGB(0, 255, 0));
 	_penBlue.CreatePen(PS_SOLID, 2, RGB(0, 0, 255));
+	
+	// IDC_TRIANGLE_PROPERITES
+
+	{
+		#define tp triangle_prop
+		tp.m_IDC_TRIANGLE_PROPERTIES_PRECISION_SLIDER.SetPos(0);
+		tp.m_IDC_TRIANGLE_PROPERTIES_PRECISION_SLIDER.SetRangeMin(0);
+		tp.m_IDC_TRIANGLE_PROPERTIES_PRECISION_SLIDER.SetRangeMax(15);
+	}
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -296,7 +306,7 @@ float line_length(const int posAx, const int posAy, const int posBx, const int p
 	return sqrt( ((posAx - posBx) * (posAx - posBx)) + ((posAy - posBy) * (posAy - posBy)) );
 }
 
-CTriangleDlg::TriangleInfo CTriangleDlg::getTriangleInfo() {
+TriangleInfo CTriangleDlg::getTriangleInfo() {
 
 	// basic coordinates
 	const int g_width = df_width - 2 * df_margin;
@@ -317,7 +327,7 @@ CTriangleDlg::TriangleInfo CTriangleDlg::getTriangleInfo() {
 	const int nodeC_x = nodeC_active ? m_NODE_C_SLIDER_X.GetPos() : x_o;
 	const int nodeC_y = nodeC_active ? m_NODE_C_SLIDER_Y.GetPos() : y_o;
 
-	CTriangleDlg::TriangleInfo _info;
+	TriangleInfo _info;
 	float a_len = line_length(nodeA_x, nodeA_y, nodeB_x, nodeB_y);
 	float b_len = line_length(nodeB_x, nodeB_y, nodeC_x, nodeC_y);
 	float c_len = line_length(nodeA_x, nodeA_y, nodeC_x, nodeC_y);
@@ -341,6 +351,7 @@ CTriangleDlg::TriangleInfo CTriangleDlg::getTriangleInfo() {
 
 void CTriangleDlg::onAnyChange() {
 	drawTriangle();
+	triangle_prop.updateData(getTriangleInfo());
 }
 
  // Buttons [x]

@@ -190,8 +190,10 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="TriangleDlg.h" />
+    <ClInclude Include="TriangleInfo.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CTRIANGLEPROPERTIES.CPP" />
     <ClCompile Include="CTrianglePropertiesDlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

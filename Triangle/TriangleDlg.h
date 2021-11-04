@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CTriangleProperties.h"
+#include "TriangleInfo.h"
 
 // CTriangleDlg dialog
 class CTriangleDlg : public CDialogEx
@@ -44,12 +45,6 @@ public:
 	int df_height;
 	int df_margin;
 
-	struct TriangleInfo {
-		float circuit;
-		float field;
-		bool isItTriangle;
-	};
-
 	CButton m_NODE_A_ACTIVE;
 	CButton m_NODE_B_ACTIVE;
 	CButton m_NODE_C_ACTIVE;
@@ -70,7 +65,7 @@ public:
 	afx_msg void OnNMCustomdrawNodeCSlidebarY(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void drawTriangle();
 	afx_msg void onAnyChange();
-	afx_msg CTriangleDlg::TriangleInfo getTriangleInfo();
+	afx_msg TriangleInfo getTriangleInfo();
 	CStatic m_DRAWING_FRAME;
 	CButton m_TRIANGLE_PROPERTIES_ACTIVE;
 	afx_msg void OnBnClickedTrianglePropertiesActive();
