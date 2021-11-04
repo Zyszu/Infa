@@ -152,9 +152,9 @@ BOOL CTriangleDlg::OnInitDialog()
 
 	 // IDC_DIALOG
 	const int SLIDER_X_MIN = df_x + df_margin;
-	const int SLIDER_X_MAX = df_width + df_margin;
+	const int SLIDER_X_MAX = df_x + df_width - df_margin;
 	const int SLIDER_Y_MIN = df_y + df_margin;
-	const int SLIDER_Y_MAX = df_height - 2 * df_margin;
+	const int SLIDER_Y_MAX = df_y + df_height - df_margin;
 
 
 	m_NODE_A_SLIDER_X.SetRangeMin(SLIDER_X_MIN);
@@ -250,6 +250,15 @@ HCURSOR CTriangleDlg::OnQueryDragIcon()
 // my functions(😴)
 
 void CTriangleDlg::drawTriangle() {
+	// There is a bug while drawing triangle
+	// when points are on the edges of drawing field
+	// they are leaving path of lines connecting them
+	// it's caused because of the fact that drawing
+	// field has specified width and height and
+	// in fact points aren't overflowing drawing field
+	// but lines are 2px wide and points are 4px wide
+	// so actually they are kind of overflowing drawing field
+	// Although I'm not going to do anything about it :)
 
 	// IDC_DRAWING_FRAME coordinates
 	CRect rect;
@@ -377,8 +386,4 @@ void CTriangleDlg::OnNMCustomdrawNodeCSlidebarX(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CTriangleDlg::OnNMCustomdrawNodeCSlidebarY(NMHDR* pNMHDR, LRESULT* pResult) { LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR); *pResult = 0; onAnyChange(); }
 
-void CTriangleDlg::OnBnClickedTrianglePropertiesActive()
-{
-	if (m_TRIANGLE_PROPERTIES_ACTIVE.GetCheck()) triangle_prop.ShowWindow(SW_SHOWNORMAL);
-	else triangle_prop.CloseWindow();
-}
+void CTriangleDlg::OnBnClickedTrianglePropertiesActive() { if (m_TRIANGLE_PROPERTIES_ACTIVE.GetCheck()) triangle_prop.ShowWindow(SW_SHOWNORMAL); else triangle_prop.ShowWindow(SW_HIDE); }
