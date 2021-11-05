@@ -312,11 +312,12 @@ void CTriangleDlg::drawTriangle() {
 }
 
 float line_length(const int posAx, const int posAy, const int posBx, const int posBy) {
-	return sqrt( ((posAx - posBx) * (posAx - posBx)) + ((posAy - posBy) * (posAy - posBy)) );
+	// don't even ask ;/
+	#define _d (double)
+	return sqrt( ((_d posAx - _d posBx) * (_d posAx - _d posBx)) + ((_d posAy - _d posBy) * (_d posAy - _d posBy)) );
 }
 
 TriangleInfo CTriangleDlg::getTriangleInfo() {
-
 	// basic coordinates
 	const int g_width = df_width - 2 * df_margin;
 	const int g_height = df_height - 2 * df_margin;
@@ -351,10 +352,11 @@ TriangleInfo CTriangleDlg::getTriangleInfo() {
 	} _info.isItTriangle = true;
 	
 	_info.circuit = a_len + b_len + c_len;
-	const float p_const = _info.circuit / 2;
+	const float p_const = _info.circuit / 2.0;
+
 	// don't even ask ;/
-	// _info.field = sqrt(p_const * (p_const - a_len) * (p_const - b_len) * (p_const - c_len));
-	_info.field = (float)sqrt((double)p_const * (double)((double)p_const - (double)a_len) * (double)((double)p_const - (double)b_len) * (double)((double)p_const - (double)c_len));
+	#define _d (double)
+	_info.field = (float)sqrt(_d p_const * (_d p_const - _d a_len) * (_d p_const - _d b_len) * (_d p_const - _d c_len));
 	return _info;
 }
 
