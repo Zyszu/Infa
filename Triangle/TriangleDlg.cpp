@@ -139,7 +139,7 @@ BOOL CTriangleDlg::OnInitDialog()
 
 	// -
 
-	dc = GetDC(); // some shit :D
+	tr_dialog = GetDC(); // some shit :D
 
 	// Buttons [x]
 
@@ -291,23 +291,23 @@ void CTriangleDlg::drawTriangle() {
 	#define _BLACK RGB(0, 0, 0)
 
 	// Drawing background
-	dc->FillSolidRect(g_x, g_y, g_width, g_height, g_color);
+	tr_dialog->FillSolidRect(g_x, g_y, g_width, g_height, g_color);
 
 	// drawing points and connecting them with lines
-	dc->SelectObject(&_penRed);
-	dc->MoveTo(nodeA_x, nodeA_y);
-	dc->LineTo(nodeB_x, nodeB_y);
-	dc->FillSolidRect(nodeA_x, nodeA_y, 4, 4, _BLACK);
+	tr_dialog->SelectObject(&_penRed);
+	tr_dialog->MoveTo(nodeA_x, nodeA_y);
+	tr_dialog->LineTo(nodeB_x, nodeB_y);
+	tr_dialog->FillSolidRect(nodeA_x, nodeA_y, 4, 4, _BLACK);
 
-	dc->SelectObject(&_penGreen);
-	dc->MoveTo(nodeB_x, nodeB_y);
-	dc->LineTo(nodeC_x, nodeC_y);
-	dc->FillSolidRect(nodeB_x, nodeB_y, 4, 4, _BLACK);
+	tr_dialog->SelectObject(&_penGreen);
+	tr_dialog->MoveTo(nodeB_x, nodeB_y);
+	tr_dialog->LineTo(nodeC_x, nodeC_y);
+	tr_dialog->FillSolidRect(nodeB_x, nodeB_y, 4, 4, _BLACK);
 
-	dc->SelectObject(&_penBlue);
-	dc->MoveTo(nodeC_x, nodeC_y);
-	dc->LineTo(nodeA_x, nodeA_y);
-	dc->FillSolidRect(nodeC_x, nodeC_y, 4, 4, _BLACK);
+	tr_dialog->SelectObject(&_penBlue);
+	tr_dialog->MoveTo(nodeC_x, nodeC_y);
+	tr_dialog->LineTo(nodeA_x, nodeA_y);
+	tr_dialog->FillSolidRect(nodeC_x, nodeC_y, 4, 4, _BLACK);
 
 }
 

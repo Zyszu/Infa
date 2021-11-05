@@ -19,7 +19,7 @@ public:
 	enum { IDD = IDD_TRIANGLE_DIALOG };
 #endif
 
-	CDC* dc; // CDC class pointer
+	CDC* tr_dialog; // CDC class pointer
 	CPen _penRed;
 	CPen _penGreen;
 	CPen _penBlue;
