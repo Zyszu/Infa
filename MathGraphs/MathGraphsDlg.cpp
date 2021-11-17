@@ -66,6 +66,9 @@ void CMathGraphsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ROOT_POINTS, m_root_points);
 	DDX_Control(pDX, IDC_GRAPH_SCALE, m_graph_scale);
 	DDX_Control(pDX, IDC_GRAPH_SCALE_INFO, m_graph_scale_info);
+	DDX_Control(pDX, IDC_A_VALUE_ACTIVE, m_a_value_active);
+	DDX_Control(pDX, IDC_B_VALUE_ACTIVE, m_b_value_active);
+	DDX_Control(pDX, IDC_C_VALUE_ACTIVE, m_c_value_active);
 }
 
 BEGIN_MESSAGE_MAP(CMathGraphsDlg, CDialogEx)
@@ -81,6 +84,9 @@ BEGIN_MESSAGE_MAP(CMathGraphsDlg, CDialogEx)
 	ON_EN_UPDATE(IDC_VALUE_B, &CMathGraphsDlg::OnUpdateValueB)
 	ON_EN_UPDATE(IDC_VALUE_C, &CMathGraphsDlg::OnUpdateValueC)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_GRAPH_SCALE, &CMathGraphsDlg::OnNMCustomdrawGraphScale)
+	ON_BN_CLICKED(IDC_A_VALUE_ACTIVE, &CMathGraphsDlg::OnClickedAValueActive)
+	ON_BN_CLICKED(IDC_B_VALUE_ACTIVE, &CMathGraphsDlg::OnClickedBValueActive)
+	ON_BN_CLICKED(IDC_C_VALUE_ACTIVE, &CMathGraphsDlg::OnClickedCValueActive)
 END_MESSAGE_MAP()
 
 
@@ -250,14 +256,22 @@ CString cs_getScale(const float& _scale) {
 void CMathGraphsDlg::rootPointsUpdate() {
 	CString p_a, p_b, p_c, _functionFormula;
 	float f_a, f_b, f_c;
+	bool b_a, b_b, b_c;
+
+	b_a = m_a_value_active.GetCheck();
+	b_b = m_b_value_active.GetCheck();
+	b_c = m_c_value_active.GetCheck();
+
+	// tere is no sense to calculate enything so just do nothing :D
+	if (!b_a && !b_b && !b_c) return;
 
 	m_function_parameter_a.GetWindowTextW(p_a);
 	m_function_parameter_b.GetWindowTextW(p_b);
 	m_function_parameter_c.GetWindowTextW(p_c);
 
-	f_a = _ttof(p_a);
-	f_b = _ttof(p_b);
-	f_c = _ttof(p_c);
+	f_a = b_a ? _ttof(p_a) : 0;
+	f_b = b_b ? _ttof(p_b) : 0;
+	f_c = b_c ? _ttof(p_c) : 0;
 
 	_functionFormula =
 		(CString)"y = " +
@@ -287,14 +301,19 @@ void CMathGraphsDlg::mathGraphUpdate() {
 	// seting up essential variables
 	CString p_a, p_b, p_c, _functionFormula;
 	float f_a, f_b, f_c;
+	bool b_a, b_b, b_c;
+
+	b_a = m_a_value_active.GetCheck();
+	b_b = m_b_value_active.GetCheck();
+	b_c = m_c_value_active.GetCheck();
 
 	m_function_parameter_a.GetWindowTextW(p_a);
 	m_function_parameter_b.GetWindowTextW(p_b);
 	m_function_parameter_c.GetWindowTextW(p_c);
 
-	f_a = _ttof(p_a);
-	f_b = _ttof(p_b);
-	f_c = _ttof(p_c);
+	f_a = b_a ? _ttof(p_a) : 0;
+	f_b = b_b ? _ttof(p_b) : 0;
+	f_c = b_c ? _ttof(p_c) : 0;
 
 	int g_posx = 25;
 	int g_posy = 200;
@@ -347,26 +366,17 @@ void CMathGraphsDlg::mathGraphUpdate() {
 }
 
 
-void CMathGraphsDlg::OnUpdateValueA()
-{
-	rootPointsUpdate();
-	mathGraphUpdate();
-}
+void CMathGraphsDlg::OnUpdateValueA() { rootPointsUpdate(); mathGraphUpdate(); }
 
+void CMathGraphsDlg::OnUpdateValueB() { rootPointsUpdate(); mathGraphUpdate(); }
 
-void CMathGraphsDlg::OnUpdateValueB()
-{
-	rootPointsUpdate();
-	mathGraphUpdate();
-}
+void CMathGraphsDlg::OnUpdateValueC() { rootPointsUpdate(); mathGraphUpdate(); }
 
+void CMathGraphsDlg::OnClickedAValueActive() { rootPointsUpdate(); mathGraphUpdate(); }
 
-void CMathGraphsDlg::OnUpdateValueC()
-{
-	rootPointsUpdate();
-	mathGraphUpdate();
-}
+void CMathGraphsDlg::OnClickedBValueActive() { rootPointsUpdate(); mathGraphUpdate(); }
 
+void CMathGraphsDlg::OnClickedCValueActive() { rootPointsUpdate(); mathGraphUpdate(); }
 
 void CMathGraphsDlg::OnNMCustomdrawGraphScale(NMHDR* pNMHDR, LRESULT* pResult)
 {
