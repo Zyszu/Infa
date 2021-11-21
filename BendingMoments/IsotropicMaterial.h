@@ -1,36 +1,30 @@
 #pragma once
 #include "atlstr.h"
 
+enum class IsotropicMaterials : int {
+	NONE = -1,
+	ALUMINIUM,
+	BRASS,
+	STEEL,
+	END_OF_MATERIALS
+};
+
 class IsotropicMaterial
 {
 public:
-	CString name;
+	IsotropicMaterials material_type;
 	long double youngModulus;
 	long double poissonsNumber;
 
 	IsotropicMaterial(
-		  const CString& name = (CString)("undefind")
-		, const long double& youngModulus = 2 * 100000
-		, const long double& poissonNumber = 0.3)
-	{
-		this->name = name;
-		this->youngModulus = youngModulus;
-		this->poissonsNumber = poissonsNumber;
-	}
+		const enum class IsotropicMaterials material_type = IsotropicMaterials::NONE
+		, const long double& youngModulus = 0
+		, const long double& poissonsNumber = 0);
 };
 
-namespace StdBeamMaterials
-{
-	const IsotropicMaterial steel((CString)"Steel", 2.1 * 100000);
-	const IsotropicMaterial aluminium((CString)"Aluminium", 6.9 * 10000, 0.33);
-	const IsotropicMaterial brass((CString)"Brass", 1.2 * 100000, 0.4);	
+const IsotropicMaterial steel(IsotropicMaterials::STEEL, 2.1 * 100000, 0.3);
+const IsotropicMaterial aluminium(IsotropicMaterials::ALUMINIUM, 6.9 * 10000, 0.33);
+const IsotropicMaterial brass(IsotropicMaterials::BRASS, 1.2 * 100000, 0.4);
 
-	enum class IsotropicMaterialsList : int {
-		NNONE = -1,
-		ALUMINIUM,
-		BRASS,
-		STEEL
-	};
-
-	IsotropicMaterial getMaterial(const IsotropicMaterialsList material);
-}
+IsotropicMaterial getMaterial(const IsotropicMaterials material);
+CString getMaterialName(const enum class IsotropicMaterials material);

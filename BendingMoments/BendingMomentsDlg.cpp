@@ -127,17 +127,12 @@ BOOL CBendingMomentsDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	{
-		using namespace StdBeamMaterials;
 
-		m_select_material.AddString(brass.name);
-		m_select_material.AddString(aluminium.name);
-		m_select_material.AddString(steel.name);
+	for (int i = 0; i < (int)IsotropicMaterials::END_OF_MATERIALS; i++)
+		m_select_material.AddString(getMaterialName((IsotropicMaterials)i));
 
-		m_select_section.AddString(_T("Tee"));
-		m_select_section.AddString(_T("Rectangle"));
-		m_select_section.AddString(_T("Circle"));
-	}
+	for (int i = 0; i < (int)SectionType::END_OF_SECTIONS; i++)
+		m_select_section.AddString(getSectionName((SectionType)i));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -214,38 +209,24 @@ int sumXD(const size_t count, ...)
 
 void CBendingMomentsDlg::onParametersChange()
 {
-	IsotropicMaterial material;
-	BeamSection section;
+	long double tempArray[] = { 10, 10 ,3, 3 };
 
-	CString temp;
-	temp.Format(_T("%d"), sumXD(11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+	curMaterial = getMaterial((IsotropicMaterials)m_select_material.GetCurSel());
+	curSection = BeamSection(getSectionType((SectionType)m_select_section.GetCurSel()), curMaterial, tempArray);
 
-	m_answear_deflection.SetWindowTextW(temp);
+	m_answear_deflection.SetWindowTextW(getMaterialName(curSection.sectionMaterial.material_type));
+	m_answear_max_bending_moment.SetWindowTextW(getSectionName(curSection.s_type));
+	CString temppp;
+	temppp.Format(_T("%d"), curSection.getNumberOfArgs());
 
-	/*temp.Format(_T("%d"), m_select_section.GetCurSel());
-	m_answear_bending_index.SetWindowTextW(StdBeamSections::getSection((StdBeamSections::Sections)m_select_section.GetCurSel()).name);
+	m_answear_bending_index.SetWindowTextW(temppp);
 
-	temp.Format(_T("%d"), m_select_material.GetCurSel());
-	m_answear_max_bending_moment.SetWindowTextW(StdBeamMaterials::getMaterial((StdBeamMaterials::IsotropicMaterialsList)(m_select_material.GetCurSel())).name);*/
-
-	{
-		#define materials StdBeamMaterials::IsotropicMaterialsList
-		#define sections StdBeamSections::Sections
-
-		material = StdBeamMaterials::getMaterial((materials)(m_select_material.GetCurSel()));
-		section = StdBeamSections::getSection((sections)(m_select_section.GetCurSel()));
-	}
-
-	if (section.iAmNotASeciton or material.name == "undefined")
+	if (!curSection.isValid())
 	{
 		m_slider_applay_force_at.EnableWindow(false);
 		m_slider_deflection_at_point.EnableWindow(false);
 		return;
 	}
-
-	curMaterial = material;
-	curSection = section;
-	curSection.isotropicMaterial = material;
 
 	CString length, force;
 	long double d_length, d_force;

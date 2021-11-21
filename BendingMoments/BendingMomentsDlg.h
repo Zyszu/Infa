@@ -59,9 +59,11 @@ public:
 	CEdit m_answear_deflection;
 	CEdit m_answear_max_bending_moment;
 	CEdit m_answear_bending_index;
-
-	BeamSection curSection;
-	IsotropicMaterial curMaterial;
 	afx_msg void OnCbnSelchangeMaterialSelect();
 	afx_msg void OnCbnSelchangeSectionSelect();
+
+
+	// global variables
+	BeamSection curSection;
+	IsotropicMaterial curMaterial;
 };
