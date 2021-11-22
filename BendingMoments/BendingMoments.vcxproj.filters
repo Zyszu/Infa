@@ -33,10 +33,7 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BeamSection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IsotropicMaterial.h">
+    <ClInclude Include="PrayToTheLordBecauseHeGaveUsShawtiesAndCoffe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,10 +47,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IsotropicMaterial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BeamSection.cpp">
+    <ClCompile Include="PrayToTheLordBecauseHeGaveUsShawtiesAndCoffe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

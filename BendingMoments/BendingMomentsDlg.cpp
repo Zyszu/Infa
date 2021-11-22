@@ -134,6 +134,16 @@ BOOL CBendingMomentsDlg::OnInitDialog()
 	for (int i = 0; i < (int)SectionType::END_OF_SECTIONS; i++)
 		m_select_section.AddString(getSectionName((SectionType)i));
 
+	m_slider_applay_force_at.SetRangeMin(0);
+	m_slider_applay_force_at.SetRangeMax(1000);
+	m_slider_applay_force_at.SetPos(1000/2);
+	m_slider_applay_force_at.EnableWindow(false);
+
+	m_slider_deflection_at_point.SetRangeMin(0);
+	m_slider_deflection_at_point.SetRangeMax(1000);
+	m_slider_deflection_at_point.SetPos(0);
+	m_slider_deflection_at_point.EnableWindow(false);
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -186,12 +196,6 @@ HCURSOR CBendingMomentsDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CBendingMomentsDlg::updateSliders()
-{
-
-}
-
-
 int sumXD(const size_t count, ...)
 {
 	va_list list;
@@ -207,19 +211,39 @@ int sumXD(const size_t count, ...)
 	return summ;
 }
 
+//long double* lookThere() {
+//	long double arr[4] = { 1, 2, 3, 4 };
+//	return arr;
+//}
+//
+//void lookHere(const long double* arr)
+//{
+//	long double* arp = new long double[4];
+//	for (size_t i = 0; i < 4; i++) {
+//		arp[i] = arr[i];
+//	}
+//
+//	long double d1 = arp[0];
+//	long double d2 = arp[1];
+//	long double d3 = arp[2];
+//	long double d4 = arp[3];
+//}
+
 void CBendingMomentsDlg::onParametersChange()
 {
-	long double tempArray[] = { 10, 10 ,3, 3 };
 
-	curMaterial = getMaterial((IsotropicMaterials)m_select_material.GetCurSel());
-	curSection = BeamSection(getSectionType((SectionType)m_select_section.GetCurSel()), curMaterial, tempArray);
+	/*long double* arr = getDefaultValues(SectionType::S_TEE);
+	long double i1 = arr[0];
+	long double i2 = arr[1];
+	long double i3 = arr[2];
+	long double i4 = arr[3];
+	lookHere(lookThere());*/
 
-	m_answear_deflection.SetWindowTextW(getMaterialName(curSection.sectionMaterial.material_type));
-	m_answear_max_bending_moment.SetWindowTextW(getSectionName(curSection.s_type));
-	CString temppp;
-	temppp.Format(_T("%d"), curSection.getNumberOfArgs());
-
-	m_answear_bending_index.SetWindowTextW(temppp);
+	curSection = BeamSection(
+		getSectionType((SectionType)m_select_section.GetCurSel()),
+		getMaterial((IsotropicMaterials)m_select_material.GetCurSel()),
+		getDefaultValues(getSectionType((SectionType)m_select_section.GetCurSel()))
+	);
 
 	if (!curSection.isValid())
 	{
@@ -241,14 +265,8 @@ void CBendingMomentsDlg::onParametersChange()
 		return;
 	}
 
-	d_length = length.GetLength() == 0 ? 0 : _tcstold(length, (wchar_t**)(&length + sizeof(length)));
-	d_force = force.GetLength() == 0 ? 0 : _tcstold(force, (wchar_t**)(&force + sizeof(force)));
-
-
-	m_slider_applay_force_at.SetRangeMin(0);
-	m_slider_applay_force_at.SetRangeMax(d_length);
-	m_slider_applay_force_at.SetPos(d_length / 2);
-	m_slider_applay_force_at.EnableWindow(true);
+	d_length = length.GetLength() == 0 ? 0 : _tcstold(length, NULL);
+	d_force = force.GetLength() == 0 ? 0 : _tcstold(force, NULL);
 
 	CString s_bendingIndex;
 	s_bendingIndex.Format(_T("%.4Le"), curSection.getBendingIndex());
@@ -259,19 +277,19 @@ void CBendingMomentsDlg::onParametersChange()
 
 void CBendingMomentsDlg::OnBnClickedCheckMaterialAdvanced2()
 {
-	
+	// nothing yet :D
 }
 
 void CBendingMomentsDlg::OnBnClickedCheckSectionAdvanced()
 {
-	
+	// nothing yet :D
 }
 
 void CBendingMomentsDlg::OnNMCustomdrawForceApplicationPoint(NMHDR* pNMHDR, LRESULT* pResult)
 { 
 	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR); *pResult = 0; 
 	CString _ret;
-	_ret.Format(_T("%d"), m_slider_applay_force_at.GetPos());
+	_ret.Format(_T("%.1f%%"), (float)m_slider_applay_force_at.GetPos() / 10.0);
 
 	m_value_apply_force_at.SetWindowTextW(_ret);
 }
@@ -280,7 +298,7 @@ void CBendingMomentsDlg::OnNMCustomdrawDeflectionAtPoint(NMHDR* pNMHDR, LRESULT*
 {
 	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR); *pResult = 0;
 	CString _ret;
-	_ret.Format(_T("%d"), m_slider_deflection_at_point.GetPos());
+	_ret.Format(_T("%.1f%%"), (float)m_slider_deflection_at_point.GetPos()/10.0);
 
 	m_value_deflection_at_point.SetWindowTextW(_ret);
 }

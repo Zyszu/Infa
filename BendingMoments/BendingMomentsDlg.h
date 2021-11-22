@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "BeamSection.h"
+#include "PrayToTheLordBecauseHeGaveUsShawtiesAndCoffe.h"
 
 
 // CBendingMomentsDlg dialog
@@ -62,8 +62,5 @@ public:
 	afx_msg void OnCbnSelchangeMaterialSelect();
 	afx_msg void OnCbnSelchangeSectionSelect();
 
-
-	// global variables
 	BeamSection curSection;
-	IsotropicMaterial curMaterial;
 };
