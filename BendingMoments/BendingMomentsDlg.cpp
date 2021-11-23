@@ -137,12 +137,12 @@ BOOL CBendingMomentsDlg::OnInitDialog()
 	m_slider_applay_force_at.SetRangeMin(0);
 	m_slider_applay_force_at.SetRangeMax(1000);
 	m_slider_applay_force_at.SetPos(1000/2);
-	m_slider_applay_force_at.EnableWindow(false);
+	m_slider_applay_force_at.EnableWindow(true);
 
 	m_slider_deflection_at_point.SetRangeMin(0);
 	m_slider_deflection_at_point.SetRangeMax(1000);
-	m_slider_deflection_at_point.SetPos(0);
-	m_slider_deflection_at_point.EnableWindow(false);
+	m_slider_deflection_at_point.SetPos(1000 / 2);
+	m_slider_deflection_at_point.EnableWindow(true);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -196,61 +196,29 @@ HCURSOR CBendingMomentsDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-int sumXD(const size_t count, ...)
-{
-	va_list list;
-	int summ = 0;
-
-	va_start(list, count);
-	for (int i = 0; i < count; i++)
-	{
-		summ += va_arg(list, int);
-	}
-
-	va_end(list);
-	return summ;
+void CBendingMomentsDlg::clearAnswears() {
+	m_answear_bending_index.SetWindowTextW(_T(""));
+	m_answear_deflection.SetWindowTextW(_T(""));
+	m_answear_max_bending_moment.SetWindowTextW(_T(""));
 }
 
-//long double* lookThere() {
-//	long double arr[4] = { 1, 2, 3, 4 };
-//	return arr;
-//}
-//
-//void lookHere(const long double* arr)
-//{
-//	long double* arp = new long double[4];
-//	for (size_t i = 0; i < 4; i++) {
-//		arp[i] = arr[i];
-//	}
-//
-//	long double d1 = arp[0];
-//	long double d2 = arp[1];
-//	long double d3 = arp[2];
-//	long double d4 = arp[3];
-//}
+long double CBendingMomentsDlg::getSliderPercent(const CSliderCtrl& slider) {
+	return (long double)slider.GetPos() / 1000.0L;
+}
 
 void CBendingMomentsDlg::onParametersChange()
 {
 
-	/*long double* arr = getDefaultValues(SectionType::S_TEE);
-	long double i1 = arr[0];
-	long double i2 = arr[1];
-	long double i3 = arr[2];
-	long double i4 = arr[3];
-	lookHere(lookThere());*/
-
-	curSection = BeamSection(
-		getSectionType((SectionType)m_select_section.GetCurSel()),
-		getMaterial((IsotropicMaterials)m_select_material.GetCurSel()),
-		getDefaultValues(getSectionType((SectionType)m_select_section.GetCurSel()))
-	);
-
-	if (!curSection.isValid())
-	{
-		m_slider_applay_force_at.EnableWindow(false);
-		m_slider_deflection_at_point.EnableWindow(false);
-		return;
-	}
+	// when done like that interesting thing happens
+	/*_beam = Beam(
+		BeamSection(
+			getSectionType((SectionType)m_select_section.GetCurSel()),
+			getDefaultValues(getSectionType((SectionType)m_select_section.GetCurSel()))
+		),
+		IsotropicMaterial(
+			getMaterial((IsotropicMaterials)m_select_material.GetCurSel())
+		)
+	);*/
 
 	CString length, force;
 	long double d_length, d_force;
@@ -258,20 +226,59 @@ void CBendingMomentsDlg::onParametersChange()
 	m_beam_length.GetWindowTextW(length);
 	m_force_value.GetWindowTextW(force);
 
-	if (length.GetLength() == 0 or force.GetLength() == 0)
-	{
-		m_slider_applay_force_at.EnableWindow(false);
-		m_slider_deflection_at_point.EnableWindow(false);
-		return;
-	}
-
 	d_length = length.GetLength() == 0 ? 0 : _tcstold(length, NULL);
 	d_force = force.GetLength() == 0 ? 0 : _tcstold(force, NULL);
 
-	CString s_bendingIndex;
-	s_bendingIndex.Format(_T("%.4Le"), curSection.getBendingIndex());
 
-	m_answear_bending_index.SetWindowTextW(s_bendingIndex);
+	SectionType s_type = (SectionType)m_select_section.GetCurSel();
+	size_t args = getNumberOfArgs(s_type);
+	long double* values = new long double[args];
+
+	for (size_t i = 0; i < args; i++) {
+		values[i] = getDefaultValues(s_type)[i];
+	}
+
+	Beam _beam = Beam(
+		BeamSection(
+			s_type,
+			values
+		),
+		IsotropicMaterial(
+			getMaterial((IsotropicMaterials)m_select_material.GetCurSel())
+		),
+		d_length
+	);
+
+	delete[] values;
+
+	if (!_beam.isValid()) {
+		clearAnswears();
+		return;
+	}
+
+	CString s_answear;
+
+	s_answear.Format(_T("%.4Le"), _beam.section.getBendingIndex());
+	m_answear_bending_index.SetWindowTextW(s_answear);
+
+	s_answear.Format(
+		_T("%.4Le"), 
+		_beam.getMaxBendingMoment(
+			getSliderPercent(m_slider_applay_force_at) * _beam.length,
+			d_force
+		)
+	);
+	m_answear_max_bending_moment.SetWindowTextW(s_answear);
+
+	s_answear.Format(
+	_T("%.4Le"),
+		_beam.getDefleftionAt(
+			getSliderPercent(m_slider_applay_force_at) * _beam.length,
+			getSliderPercent(m_slider_deflection_at_point) * _beam.length,
+			d_force
+		)
+	);
+	m_answear_deflection.SetWindowTextW(s_answear);
 }
 
 
@@ -292,6 +299,7 @@ void CBendingMomentsDlg::OnNMCustomdrawForceApplicationPoint(NMHDR* pNMHDR, LRES
 	_ret.Format(_T("%.1f%%"), (float)m_slider_applay_force_at.GetPos() / 10.0);
 
 	m_value_apply_force_at.SetWindowTextW(_ret);
+	onParametersChange();
 }
 
 void CBendingMomentsDlg::OnNMCustomdrawDeflectionAtPoint(NMHDR* pNMHDR, LRESULT* pResult)
@@ -301,6 +309,7 @@ void CBendingMomentsDlg::OnNMCustomdrawDeflectionAtPoint(NMHDR* pNMHDR, LRESULT*
 	_ret.Format(_T("%.1f%%"), (float)m_slider_deflection_at_point.GetPos()/10.0);
 
 	m_value_deflection_at_point.SetWindowTextW(_ret);
+	onParametersChange();
 }
 
 void CBendingMomentsDlg::OnEnChangeBeamLength() { onParametersChange(); }

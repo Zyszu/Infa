@@ -54,13 +54,12 @@ public:
 	CButton m_check_custom_material;
 	afx_msg void OnEnChangeBeamLength();
 	afx_msg void OnEnChangeForceValue();
-	afx_msg void updateSliders();
 //	CEdit m_bending_index;
 	CEdit m_answear_deflection;
 	CEdit m_answear_max_bending_moment;
 	CEdit m_answear_bending_index;
 	afx_msg void OnCbnSelchangeMaterialSelect();
 	afx_msg void OnCbnSelchangeSectionSelect();
-
-	BeamSection curSection;
+	afx_msg void clearAnswears();
+	afx_msg long double getSliderPercent(const CSliderCtrl& slider);
 };

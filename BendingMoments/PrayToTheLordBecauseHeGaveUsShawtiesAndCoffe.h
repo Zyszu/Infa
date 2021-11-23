@@ -2,7 +2,7 @@
 #include "atlstr.h"
 #include <math.h>
 
-#define __PI 3.14159265
+#define __PI 3.14159265L
 
 enum class IsotropicMaterials : int {
 	NONE = -1,
@@ -44,19 +44,21 @@ enum class SectionType : int
 CString getSectionName(const enum class SectionType s_type);
 SectionType getSectionType(const enum class SectionType s_type);
 long double* getDefaultValues(const enum class SectionType s_type);
+size_t getNumberOfArgs(const enum class SectionType s_type);
 
 class BeamSection
 {
-public:
-	SectionType s_type;
+private: 
 	size_t arraySize;
 	long double* dataArray;
-
-	CString _getSectionName();
+	SectionType s_type;
 	size_t getNumberOfArgs();
+
+public:
 	BeamSection(
-		  const enum class SectionType s_type = SectionType::S_UNDEFINED
-		, const long double* _dataArray = {});
+		const enum class SectionType s_type
+		, const long double* _dataArray);
+	BeamSection();
 	~BeamSection();
 
 private:
@@ -66,6 +68,8 @@ private:
 
 public:
 	long double getBendingIndex();
+	const SectionType getSectionType();
+	CString _getSectionName();
 };
 
 class Beam
@@ -73,6 +77,12 @@ class Beam
 public:
 	BeamSection section;
 	IsotropicMaterial material;
+	long double length;
+
+	Beam(const BeamSection _section, const IsotropicMaterial _material, const long double& length);
+	Beam();
 
 	const bool isValid();
+	const long double getMaxBendingMoment(const long double& point, const long double& force);
+	const long double getDefleftionAt(const long double& f_point, const long double& d_point, const long double& force);
 };
