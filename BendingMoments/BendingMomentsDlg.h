@@ -5,14 +5,20 @@
 #pragma once
 
 #include "PrayToTheLordBecauseHeGaveUsShawtiesAndCoffe.h"
+#include "CSECTION_ADVANCED.h"
 
 
 // CBendingMomentsDlg dialog
 class CBendingMomentsDlg : public CDialogEx
 {
 // Construction
+	CBendingMomentsDlg& returnThisClass() {
+		return *this;
+	}
+
 public:
 	CBendingMomentsDlg(CWnd* pParent = nullptr);	// standard constructor
+	CSECTION_ADVANCED sectionAdvanced();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -48,10 +54,10 @@ public:
 	CButton m_check_section_advanced;
 	afx_msg void OnNMCustomdrawForceApplicationPoint(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMCustomdrawDeflectionAtPoint(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBnClickedCheckMaterialAdvanced2();
+//	afx_msg void OnBnClickedCheckMaterialAdvanced2();
 	afx_msg void OnBnClickedCheckSectionAdvanced();
 	afx_msg void onParametersChange();
-	CButton m_check_custom_material;
+//	CButton m_check_custom_material;
 	afx_msg void OnEnChangeBeamLength();
 	afx_msg void OnEnChangeForceValue();
 //	CEdit m_bending_index;

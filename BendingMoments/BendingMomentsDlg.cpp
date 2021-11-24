@@ -73,7 +73,7 @@ void CBendingMomentsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FORCE_VALUE, m_force_value);
 	//  DDX_Control(pDX, IDC_CHECK_MATERIAL_ADVANCED2, m_check_material_advanced);
 	DDX_Control(pDX, IDC_CHECK_SECTION_ADVANCED, m_check_section_advanced);
-	DDX_Control(pDX, IDC_CHECK_MATERIAL_ADVANCED2, m_check_custom_material);
+	//  DDX_Control(pDX, IDC_CHECK_MATERIAL_ADVANCED2, m_check_custom_material);
 	//  DDX_Control(pDX, IDC_BENDING_INDEX, m_bending_index);
 	DDX_Control(pDX, IDC_BEAM_DEFLECTION_AT_CHOSEN_POINT, m_answear_deflection);
 	DDX_Control(pDX, IDC_MAX_BENDING_MOMENT, m_answear_max_bending_moment);
@@ -86,7 +86,7 @@ BEGIN_MESSAGE_MAP(CBendingMomentsDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_FORCE_APPLICATION_POINT, &CBendingMomentsDlg::OnNMCustomdrawForceApplicationPoint)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_DEFLECTION_AT_POINT, &CBendingMomentsDlg::OnNMCustomdrawDeflectionAtPoint)
-	ON_BN_CLICKED(IDC_CHECK_MATERIAL_ADVANCED2, &CBendingMomentsDlg::OnBnClickedCheckMaterialAdvanced2)
+//	ON_BN_CLICKED(IDC_CHECK_MATERIAL_ADVANCED2, &CBendingMomentsDlg::OnBnClickedCheckMaterialAdvanced2)
 	ON_BN_CLICKED(IDC_CHECK_SECTION_ADVANCED, &CBendingMomentsDlg::OnBnClickedCheckSectionAdvanced)
 	ON_EN_CHANGE(IDC_BEAM_LENGTH, &CBendingMomentsDlg::OnEnChangeBeamLength)
 	ON_EN_CHANGE(IDC_FORCE_VALUE, &CBendingMomentsDlg::OnEnChangeForceValue)
@@ -127,6 +127,8 @@ BOOL CBendingMomentsDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+
+	sectionAdvanced.Create(IDD_CSECTION_ADVANCED);
 
 	for (int i = 0; i < (int)IsotropicMaterials::END_OF_MATERIALS; i++)
 		m_select_material.AddString(getMaterialName((IsotropicMaterials)i));
@@ -209,6 +211,12 @@ long double CBendingMomentsDlg::getSliderPercent(const CSliderCtrl& slider) {
 void CBendingMomentsDlg::onParametersChange()
 {
 
+	if (m_check_section_advanced.GetCheck())
+	{
+		SectionType s_type = getSectionType((SectionType)m_select_section.GetCurSel());
+		sectionAdvanced.pickImg(s_type);
+	}
+
 	// when done like that interesting thing happens
 	/*_beam = Beam(
 		BeamSection(
@@ -235,7 +243,9 @@ void CBendingMomentsDlg::onParametersChange()
 	long double* values = new long double[args];
 
 	for (size_t i = 0; i < args; i++) {
-		values[i] = getDefaultValues(s_type)[i];
+		if(m_check_section_advanced.GetCheck())
+			values[i] = sectionAdvanced.getValues()[i];
+		else values[i] = getDefaultValues(s_type)[i];
 	}
 
 	Beam _beam = Beam(
@@ -282,14 +292,19 @@ void CBendingMomentsDlg::onParametersChange()
 }
 
 
-void CBendingMomentsDlg::OnBnClickedCheckMaterialAdvanced2()
-{
-	// nothing yet :D
-}
+//void CBendingMomentsDlg::OnBnClickedCheckMaterialAdvanced2()
+//{
+//	// nothing yet :D
+//}
 
 void CBendingMomentsDlg::OnBnClickedCheckSectionAdvanced()
 {
-	// nothing yet :D
+	if (m_check_section_advanced.GetCheck()) {
+		sectionAdvanced.ShowWindow(SW_SHOWNORMAL);
+		SectionType s_type = getSectionType((SectionType)m_select_section.GetCurSel());
+		sectionAdvanced.pickImg(s_type);
+	}
+	else sectionAdvanced.ShowWindow(SW_HIDE);
 }
 
 void CBendingMomentsDlg::OnNMCustomdrawForceApplicationPoint(NMHDR* pNMHDR, LRESULT* pResult)
