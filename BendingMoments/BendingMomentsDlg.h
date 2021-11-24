@@ -18,7 +18,7 @@ class CBendingMomentsDlg : public CDialogEx
 
 public:
 	CBendingMomentsDlg(CWnd* pParent = nullptr);	// standard constructor
-	CSECTION_ADVANCED sectionAdvanced();
+	CSECTION_ADVANCED sectionAdvanced;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
