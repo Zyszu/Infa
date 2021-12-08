@@ -139,6 +139,21 @@ BOOL CKolosDlg::OnInitDialog()
 	input[8] = &m_input9;
 	input[9] = &m_input10;
 
+	dc = GetDC();
+
+	_pen.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+
+	magicColors[0] = RGB(105, 89, 88);
+	magicColors[1] = RGB(182, 200, 169);
+	magicColors[2] = RGB(200, 234, 211);
+	magicColors[3] = RGB(207, 255, 229);
+	magicColors[4] = RGB(206, 218, 218);
+	magicColors[5] = RGB(251, 54, 64);
+	magicColors[6] = RGB(36, 123, 160);
+	magicColors[7] = RGB(153, 154, 198);
+	magicColors[8] = RGB(0, 56, 68);
+	magicColors[9] = RGB(0, 108, 103);
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -216,13 +231,20 @@ float f_standardDeviation(float tab[], const size_t& n)
 	return sqrtf(deviation / n);
 }
 
+float f_max(float tab[], const size_t& n) {
+	float _max = tab[0];
+	for (size_t i = 0; i < n; i++)
+		if (tab[i] > _max) _max = tab[i];
+	return _max;
+}
+
 void CKolosDlg::randomizeInput()
 {
 	CString s_value;
 
 	for (size_t i = 0; i < 10; i++)
 	{
-		s_value.Format(_T("%.0f"), (float)(rand() % 100));
+		s_value.Format(_T("%.0f"), (float)(rand() % 101));
 		input[i]->SetWindowTextW(s_value);
 	}
 }
@@ -245,9 +267,56 @@ void CKolosDlg::updateOutput()
 	m_output_standard_deviation.SetWindowTextW(s_value);
 }
 
+void CKolosDlg::updateGraph()
+{
+	float values[10];
+	CString s_value;
+
+	for (size_t i = 0; i < 10; i++)
+	{
+		input[i]->GetWindowTextW(s_value);
+		values[i] = (bool)input[i]->GetWindowTextLengthW() && _ttof(s_value) >= 0 ? _ttof(s_value) : 0;
+	}
+
+	const int _x = 750;
+	const int _y = 20;
+	const int _length = 700;
+	const int _height = 400;
+
+	#define __WHITE RGB(255, 255, 255)
+	#define __BLACK RGB(0, 0, 0)
+
+	const COLORREF _color = __WHITE; //RGB(255, 255, 255);
+
+	dc->FillSolidRect(_x, _y, _length, _height, _color);
+
+
+	// length / 10 = 70px
+	// padding 5px -> 60px
+
+	const int padding = 5;
+	const int happyHalloween = 50;
+
+	for (size_t i = 0; i < 10; i++) {
+		//int thisColorNum = happyHalloween + (i * 5);
+		//COLORREF thisColor = RGB(thisColorNum, thisColorNum, thisColorNum);
+
+		int height = (_height/f_max(values, 10)) * values[i];
+		COLORREF thisColor = magicColors[i];
+		dc->FillSolidRect(_x + (60 * i) + (5 * (i+1)), _y + _height, 60, -height, thisColor);
+	}
+
+	// I added and removed 5 from x because it looks better
+	dc->SelectObject(&_pen);
+	dc->MoveTo(_x + 5, _y + _height - (4*f_average(values, 10)));
+	dc->LineTo(_x + _length - 5, _y + _height - (4 * f_average(values, 10)));
+
+}
+
 void CKolosDlg::onParametersChange()
 {
 	updateOutput();
+	updateGraph();
 }
 
 

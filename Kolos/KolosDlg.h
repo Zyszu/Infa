@@ -17,6 +17,9 @@ public:
 	enum { IDD = IDD_KOLOS_DIALOG };
 #endif
 
+	CDC* dc;
+	CPen _pen;
+
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
@@ -45,8 +48,11 @@ public:
 
 	CEdit* input[10];
 
+	COLORREF magicColors[10];
+
 	afx_msg void randomizeInput();
 	afx_msg void updateOutput();
+	afx_msg void updateGraph();
 	afx_msg void onParametersChange();
 
 	afx_msg void OnChangeInput1();
