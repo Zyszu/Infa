@@ -11,15 +11,13 @@
 
 IMPLEMENT_DYNAMIC(CSECTION_ADVANCED, CDialogEx)
 
-CSECTION_ADVANCED::CSECTION_ADVANCED(CWnd* pParent /*=nullptr*/)
+CSECTION_ADVANCED::CSECTION_ADVANCED(CWnd* pParent)
 	: CDialogEx(IDD_CSECTION_ADVANCED, pParent)
 {
 	this->pPatent = pParent;
 }
 
-CSECTION_ADVANCED::~CSECTION_ADVANCED()
-{
-}
+CSECTION_ADVANCED::~CSECTION_ADVANCED() {}
 
 void CSECTION_ADVANCED::DoDataExchange(CDataExchange* pDX)
 {
@@ -79,12 +77,11 @@ long double* CSECTION_ADVANCED::getValues() {
 	return arr;
 }
 
-void CSECTION_ADVANCED::OnChangeValueLengthA() {
+void CSECTION_ADVANCED::OnAnyChange() {
 	
 }
 
-void CSECTION_ADVANCED::OnChangeValueLengthB() {}
-
-void CSECTION_ADVANCED::OnChangeValueLengthT1() {}
-
-void CSECTION_ADVANCED::OnChangeValueLengthT2() {}
+void CSECTION_ADVANCED::OnChangeValueLengthA()			{ OnAnyChange(); }
+void CSECTION_ADVANCED::OnChangeValueLengthB()			{ OnAnyChange(); }
+void CSECTION_ADVANCED::OnChangeValueLengthT1()			{ OnAnyChange(); }
+void CSECTION_ADVANCED::OnChangeValueLengthT2()			{ OnAnyChange(); }

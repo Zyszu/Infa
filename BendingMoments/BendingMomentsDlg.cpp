@@ -86,7 +86,6 @@ BEGIN_MESSAGE_MAP(CBendingMomentsDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_FORCE_APPLICATION_POINT, &CBendingMomentsDlg::OnNMCustomdrawForceApplicationPoint)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_DEFLECTION_AT_POINT, &CBendingMomentsDlg::OnNMCustomdrawDeflectionAtPoint)
-//	ON_BN_CLICKED(IDC_CHECK_MATERIAL_ADVANCED2, &CBendingMomentsDlg::OnBnClickedCheckMaterialAdvanced2)
 	ON_BN_CLICKED(IDC_CHECK_SECTION_ADVANCED, &CBendingMomentsDlg::OnBnClickedCheckSectionAdvanced)
 	ON_EN_CHANGE(IDC_BEAM_LENGTH, &CBendingMomentsDlg::OnEnChangeBeamLength)
 	ON_EN_CHANGE(IDC_FORCE_VALUE, &CBendingMomentsDlg::OnEnChangeForceValue)
@@ -217,17 +216,6 @@ void CBendingMomentsDlg::onParametersChange()
 		sectionAdvanced.pickImg(s_type);
 	}
 
-	// when done like that interesting thing happens
-	/*_beam = Beam(
-		BeamSection(
-			getSectionType((SectionType)m_select_section.GetCurSel()),
-			getDefaultValues(getSectionType((SectionType)m_select_section.GetCurSel()))
-		),
-		IsotropicMaterial(
-			getMaterial((IsotropicMaterials)m_select_material.GetCurSel())
-		)
-	);*/
-
 	CString length, force;
 	long double d_length, d_force;
 
@@ -290,12 +278,6 @@ void CBendingMomentsDlg::onParametersChange()
 	);
 	m_answear_deflection.SetWindowTextW(s_answear);
 }
-
-
-//void CBendingMomentsDlg::OnBnClickedCheckMaterialAdvanced2()
-//{
-//	// nothing yet :D
-//}
 
 void CBendingMomentsDlg::OnBnClickedCheckSectionAdvanced()
 {

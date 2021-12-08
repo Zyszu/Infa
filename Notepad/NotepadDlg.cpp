@@ -60,6 +60,7 @@ void CNotepadDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_NOTEPAD, m_notepad);
+	DDX_Control(pDX, IDC_PATH, m_path);
 }
 
 BEGIN_MESSAGE_MAP(CNotepadDlg, CDialogEx)
@@ -67,6 +68,7 @@ BEGIN_MESSAGE_MAP(CNotepadDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_READ_FILE, &CNotepadDlg::OnBnClickedReadFile)
+	ON_BN_CLICKED(IDC_SAVE_FILE, &CNotepadDlg::OnBnClickedSaveFile)
 END_MESSAGE_MAP()
 
 
@@ -157,54 +159,39 @@ HCURSOR CNotepadDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CNotepadDlg::readFile(const CString& path)
+void CNotepadDlg::OnOK() {
+	// it's here just to prevent cloasing the window after pressing enter button
+}
+
+void CNotepadDlg::justReadFile(CFileDialog& fFile)
 {
-	LPCTSTR pszFilter = _T("Tekstowy (*.txt)|*.txt|");
-	CStdioFile file(path);
-	CString _temp;
-	file.ReadString(_temp);
-	m_notepad.SetWindowTextW(_temp);
-	isFileNotSaved = true;
+	CString path = fFile.GetPathName();
+	m_path.SetWindowTextW(fFile.GetPathName());
+	if (path.IsEmpty()) return;
 
-	// Save
-
+	CStdioFile plik(fFile.GetPathName(), CFile::modeRead | CFile::typeText);
 	CString temp;
+	plik.ReadString(temp);
+	m_notepad.SetWindowTextW(temp);
 
-	editbox.GetWindowTextW(temp);
-
-
-
-	LPCTSTR pszFilter =
-
-		_T("Tekstowy (*.txt)|*.txt|");
-
-
-
-	CFileDialog cFile(FALSE, _T("txt"), _T("Nowy plik.txt"),
-
-		OFN_OVERWRITEPROMPT, pszFilter);
-
-
-
-	if (cFile.DoModal())
-
-	{
-
-		CStdioFile plik(cFile.GetPathName(),
-
-			CFile::modeCreate | CFile::modeWrite | CFile::typeText);
-
-
-
-		plik.WriteString(temp);
-
-	}
-
-}
+	isFileNotSaved = true;
 }
 
-void CNotepadDlg::saveFile(const CString& path)
+void CNotepadDlg::justSaveFile(CFileDialog& fFile, CString path)
 {
+	CString temp;
+	m_notepad.GetWindowTextW(temp);
+
+	if (path == (CString)"")
+	{
+		CStdioFile plik(fFile.GetPathName(), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		plik.WriteString(temp);
+	}
+	else
+	{
+		CStdioFile plik(path, CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		plik.WriteString(temp);
+	}
 
 	isFileNotSaved = false;
 }
@@ -212,7 +199,7 @@ void CNotepadDlg::saveFile(const CString& path)
 // if user wants to save changes function returns true
 bool CNotepadDlg::unsavedFileWarnign()
 {
-	if (!isFileNotSaved) return false;
+	if (!isFileNotSaved) return true;
 	if (
 		AfxMessageBox(
 			_T("Do you want to save changes?"),
@@ -227,17 +214,21 @@ bool CNotepadDlg::unsavedFileWarnign()
 
 void CNotepadDlg::OnBnClickedReadFile()
 {
-	CString path;
+	CFileDialog fInput(TRUE);
+	if (!unsavedFileWarnign()) justSaveFile(fInput, currFile);
+	
+	if (!fInput.DoModal()) return;
+	currFile = fInput.GetPathName();
 
-	LPCTSTR pszFilter =
-		_T("Tekstowy (*.txt)|*.txt|");
-	CFileDialog fInput(TRUE, pszFilter);
+	justReadFile(fInput);
+}
 
-	if (fInput.DoModal())
-	{
-		path = fInput.GetPathName();
-	}
 
-	unsavedFileWarnign();
-	readFile(path);
+void CNotepadDlg::OnBnClickedSaveFile()
+{
+	LPCTSTR pszFilter = _T("Tekstowy (*.txt)|*.txt|");
+	CFileDialog fInput(FALSE, _T("txt"), _T("Nowy plik.txt"), OFN_OVERWRITEPROMPT, pszFilter);
+	if (!fInput.DoModal()) return;
+
+	justSaveFile(fInput);
 }

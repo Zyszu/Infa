@@ -28,13 +28,17 @@ protected:
 	afx_msg void				OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void				OnPaint();
 	afx_msg HCURSOR				OnQueryDragIcon();
-								DECLARE_MESSAGE_MAP()
+	void						OnOK();
+	afx_msg						DECLARE_MESSAGE_MAP()
 public:
 	bool						isFileNotSaved;
+	CString						currFile;
+	CEdit						m_notepad;
 public:
 	afx_msg bool				unsavedFileWarnign();
-	afx_msg void				readFile(const CString& path);
-	afx_msg void				saveFile(const CString& path);
+	afx_msg void				justReadFile(CFileDialog& fFile);
+	afx_msg void				justSaveFile(CFileDialog& fFile, CString path = (CString)"");
 	afx_msg void				OnBnClickedReadFile();
-	CEdit m_notepad;
+	afx_msg void				OnBnClickedSaveFile();
+	CStatic m_path;
 };
